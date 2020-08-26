@@ -1,0 +1,12 @@
+Acceder formulario registro Usuario:
+  title: 'usuario wdls access registro'
+  description: 'Access form Registro'
+Acceder consulta Usuario:
+  title: 'usuario wdls access consulta'
+  description: 'Access consulta'
+Acceder consulta excel Usuario:
+  title: 'usuario wdls access consulta excel'
+  description: 'Access consulta excel'
+Acceder Importar Usuario:
+  title: 'usuario wdls access importar'
+  description: 'Access importar'

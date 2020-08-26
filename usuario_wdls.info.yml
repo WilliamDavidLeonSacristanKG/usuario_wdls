@@ -1,0 +1,5 @@
+name: 'usuario_wdls'
+type: module
+description: 'Modulo para prueba de serempre de William David Leon Sacristan'
+core: 8.x
+package: 'serempre'

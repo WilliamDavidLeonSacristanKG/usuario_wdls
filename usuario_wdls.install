@@ -1,0 +1,91 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the usuario_wdls module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Creates some default entries on this module custom table.
+ *
+ * @see hook_install()
+ *
+ * @ingroup usuario_wdls
+ */
+function usuario_wdls_install() {
+  
+}
+
+/**
+ * Implements hook_schema().
+ *
+ * Defines the database tables used by this module.
+ *
+ * @see hook_schema()
+ *
+ * @ingroup usuario_wdls
+ */
+function usuario_wdls_schema() {
+  $schema['myusers'] = [
+    'description' => 'Stores persons entries.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique user ID.',
+      ],
+      'nombre' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Name of the person.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'nombre' => ['nombre'],
+    ],
+  ];
+
+  $schema['log_users'] = [
+    'description' => 'Log acces user',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique user ID.',
+      ],
+      'fecha' => [
+        'description' => 'A Unix timestamp indicating date login',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'ip' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'IP login.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique user ID.',
+      ],
+      'tipo_log' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Type login (login/registro)',
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+
+  return $schema;
+}

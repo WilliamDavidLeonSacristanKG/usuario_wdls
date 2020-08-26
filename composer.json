@@ -1,0 +1,13 @@
+{
+    "name": "usuario_wdls",
+    "type": "drupal-module",
+    "description": "Modulo para prueba de serempre de William David Leon Sacristan",
+    "keywords": [
+    ],
+    "homepage": "https://www.drupal.org/project/usuario_wdls",
+    "minimum-stability": "dev",
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/usuario_wdls",
+        "source": "http://cgit.drupalcode.org/usuario_wdls",
+    },
+}

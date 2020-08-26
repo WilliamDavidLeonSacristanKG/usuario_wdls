@@ -1,0 +1,28 @@
+usuario_wdls.usuario_wdls_controller_registro:
+  path: '/usuario/registro'
+  defaults:
+    _form: '\Drupal\usuario_wdls\Form\Registro'
+    _title: 'Registro'
+  requirements:
+    _permission: 'usuario wdls access registro'
+usuario_wdls.usuario_wdls_controller_consulta:
+  path: '/usuario/consulta'
+  defaults:
+    _controller: '\Drupal\usuario_wdls\Controller\UsuarioWdlsController::consulta'
+    _title: 'Consulta'
+  requirements:
+    _permission: 'usuario wdls access consulta'
+usuario_wdls.usuario_wdls_controller_consulta_excel:
+  path: '/usuario/consulta/excel'
+  defaults:
+    _controller: '\Drupal\usuario_wdls\Controller\UsuarioWdlsController::consulta_excel'
+    _title: 'Consulta excel'
+  requirements:
+    _permission: 'usuario wdls access consulta excel'
+usuario_wdls.usuario_wdls_form_importar:
+  path: '/usuario/importar'
+  defaults:
+    _form: '\Drupal\usuario_wdls\Form\Importar'
+    _title: 'Importar'
+  requirements:
+    _permission: 'usuario wdls access importar'
