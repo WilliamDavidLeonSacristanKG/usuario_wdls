@@ -56,6 +56,9 @@ class Registro extends FormBase {
 
 	public function validateForm(array &$form, FormStateInterface $form_state) {
 		$name = $form_state->getValue('name');
+		if ($name == NULL || $name == '') {
+			$form_state->setErrorByName('name', $this->t('The name must be complete.'));
+		}
 		if (strlen($name) < 5) {
 			// Set an error for the form element with a key of "name".
 			$form_state->setErrorByName('name', $this->t('The name must be at least 5 characters long.'));
@@ -64,6 +67,12 @@ class Registro extends FormBase {
 
 	function submitFormUsuario(array &$form, FormStateInterface $form_state) {
 
+		$element = $form['name']; 
+		if ($form_state->getValue('name') == NULL || $form_state->getValue('name') == '') {
+			$form_state->setErrorByName('name', $this->t('The name must be complete.'));
+			$element['#markup'] = drupal_set_message(t('Necesario ingresar nombre valido '), 'warning', FALSE);
+			return $element;
+		}
 		$this->database->insert('myusers')
 		->fields([
 			'nombre' => $form_state->getValue('name'),

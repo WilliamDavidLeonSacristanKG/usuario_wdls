@@ -32,7 +32,7 @@ class UsuarioWdlsController extends ControllerBase {
    *   Return Hello string.
    */
   public function consulta() {
-    $header = array('id', 'nombre');
+    $header = array('id', 'name');
     $sth = $this->database->select('myusers', 'x')
       ->fields('x', array('id', 'nombre'));
     $data = $sth->execute();
@@ -40,7 +40,7 @@ class UsuarioWdlsController extends ControllerBase {
     foreach ($query as $item) {
       $rows[] = [
         'id' =>  $item->id,
-        'nombre' => $item->nombre,
+        'name' => $item->nombre,
       ];
     }
     return array(
@@ -57,7 +57,7 @@ class UsuarioWdlsController extends ControllerBase {
    */
   public function consulta_excel() {
 
-    $header = array('id', 'nombre');
+    $header = array('id', 'name');
     $sth = $this->database->select('myusers', 'x')
       ->fields('x', array('id', 'nombre'));
     $data = $sth->execute();
@@ -65,7 +65,7 @@ class UsuarioWdlsController extends ControllerBase {
     foreach ($query as $item) {
       $rows[] = [
         'id' =>  $item->id,
-        'nombre' => $item->nombre,
+        'name' => $item->nombre,
       ];
     }
 

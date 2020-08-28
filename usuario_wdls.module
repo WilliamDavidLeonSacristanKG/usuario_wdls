@@ -6,9 +6,11 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
-use \Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityInterface;
 use Symfony\Component\HttpFoundation;
+
 
 function _usuario_wdls_login_submit(&$form, FormStateInterface $form_state) {
 	$database = \Drupal::database();
@@ -23,19 +25,6 @@ function _usuario_wdls_login_submit(&$form, FormStateInterface $form_state) {
 	drupal_set_message('Registro de login guardado en la BD');
 }
 
-function _usuario_wdls_register_submit(&$form, FormStateInterface $form_state) {
-	$database = \Drupal::database();
-	$database->insert('log_users')
-		->fields([
-			'fecha' => time(),
-			'ip' =>  \Drupal::request()->getClientIp(),
-			'uid' => $form_state->getValue('uid'),
-			'tipo_log' => 'registro',
-		])
-		->execute();
-	drupal_set_message('Registro de registro guardado en la BD');
-}
-
 /**
  * Implements hook_form_user_login_form_alter().
  */
@@ -44,10 +33,20 @@ function usuario_wdls_form_user_login_form_alter(&$form, FormStateInterface $for
 }
 
 /**
- * Implements hook_form_user_register_form_alter().
+ * Implements hook_user_insert().
  */
-function usuario_wdls_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  	$form['actions']['submit']['#submit'][] = '_usuario_wdls_register_submit';
+function usuario_wdls_user_insert(EntityInterface $entity) {
+	$uid_user = $entity->id();
+	$database = \Drupal::database();
+	$database->insert('log_users')
+		->fields([
+			'fecha' => time(),
+			'ip' =>  \Drupal::request()->getClientIp(),
+			'uid' => $uid_user,
+			'tipo_log' => 'registro',
+		])
+		->execute();
+	drupal_set_message('Registro de registro guardado en la BD');
 }
 
 /**

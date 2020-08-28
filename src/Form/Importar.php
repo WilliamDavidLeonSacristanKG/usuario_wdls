@@ -4,9 +4,11 @@ namespace Drupal\usuario_wdls\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\StreamWrapper\PublicStream;
 use Drupal\file\Entity\File;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Database\Connection;
+
 
 /**
  * Class Importar.
@@ -41,7 +43,7 @@ class Importar extends FormBase {
       'file_validate_size' => array(file_upload_max_size()),
     );
     $form['upload_file'] = [
-      '#type' => 'managed_file',
+      '#type' => 'file',
       '#title' => $this->t('Upload file'),
       '#upload_location' => 'public://usuarios/'.date("Y-m-d-H-i-s"),
       '#upload_validators' => [
@@ -60,11 +62,6 @@ class Importar extends FormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $this->file = file_save_upload('upload_file', $form['upload_file']['#upload_validators'], FALSE, 0);
-    // Ensure we have the file uploaded.
-    if (!$this->file) {
-      //$form_state->setErrorByName('upload_file', $this->t('File to import not found.'));
-    }
   }
 
   /**
@@ -72,25 +69,46 @@ class Importar extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Display result.
-    $form_file = $form_state->getValue('upload_file', 0);
-    if (isset($form_file[0]) && !empty($form_file[0])) {
-      $file = File::load($form_file[0]);
-      $file->setPermanent();
-      $file->save();
-    }
-    $handle = file_get_contents($file->url());
-    $csv = array_map('str_getcsv', file($file->url()));
+    $all_files = $this->getRequest()->files->get('files', []);
+    $file = $all_files['upload_file'];
+    $file_name = $file->getClientOriginalName();
+    $file_path = $file->getRealPath();
+    $file_final = file_unmanaged_copy($file_path, 'public://usuarios/'.$file_name);
+    $url_file = file_create_url($file_final);
+    $csv = array_map('str_getcsv', file($url_file));
     array_walk($csv, function(&$a) use ($csv) {
       $a = array_combine($csv[0], $a);
     });
     array_shift($csv);
+    $total = count($csv);
+
+    $batch = [
+      'title' => t('Creando usuarios a travez de CSV'),
+      'operations' => [],
+      'init_message' => t('Import process is starting.'),
+      'progress_message' => t('Processed @current out of @total. Estimated time: @estimate.'),
+      'error_message' => t('The process has encountered an error.'),
+    ];
+
     foreach ($csv as $value) {
-      $this->database->insert('myusers')
-      ->fields([
-        'nombre' => $value['nombre'],
-      ])
-      ->execute();
-      drupal_set_message(t('Se ha creado el usuario '.$value['nombre']), 'status', FALSE);
+      $batch['operations'][] = [['\Drupal\usuario_wdls\Form\Importar', 'createUser'], [$value['name']]];           
     }
+
+    batch_set($batch);
+
+    drupal_set_message(t('Se ha creado los usuarios del CSV'), 'status', FALSE);
+
+    $form_state->setRebuild(TRUE);
+  }
+
+  function createUser($name, &$context) {
+    $database = \Drupal::database();
+    $database->insert('myusers')
+      ->fields([
+        'nombre' => $name,
+      ])
+      ->execute(); 
+    $context['results'][] = $name;
+    $context['message'] = t('Created user @title', array('@title' => $name));
   }
 }
